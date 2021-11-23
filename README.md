@@ -8,6 +8,11 @@ Tela de login e cadastro
 
 ![orgs-login-cadastro](https://user-images.githubusercontent.com/8989346/143096079-721d6baf-b0e0-475c-9bdd-820351403b52.gif)
 
+
+## 📁 Acesso ao projeto
+
+Você pode acompanhar a evolução do projeto a partir da [branch dev](https://github.com/alexfelipe/orgs-room-2/tree/dev). 
+
 <!-- 
 
 ## 🔨 Funcionalidades do projeto
