@@ -1,13 +1,23 @@
 package br.com.alura.orgs.ui.activity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityLoginBinding
+import br.com.alura.orgs.extensions.mostraToast
+import br.com.alura.orgs.preferences.USUARIO_LOGADO
+import br.com.alura.orgs.preferences.dataStore
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+
+private const val TAG = "LoginActivity"
 
 class LoginActivity : AppCompatActivity() {
 
@@ -25,22 +35,41 @@ class LoginActivity : AppCompatActivity() {
             activityLoginBotaoEntrar.setOnClickListener {
                 val id = activityLoginUsuario.text.toString()
                 val senha = activityLoginSenha.text.toString()
-                lifecycleScope.launch {
-                    val resultado = dao.autentica(id, senha)?.let {
-                        "Usuário autenticado"
-                    } ?: "Falha ao autenticar"
-                    Toast.makeText(
-                        this@LoginActivity,
-                        resultado,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                autentica(id, senha)
             }
             activityLoginBotaoCadastrar.setOnClickListener {
                 vaiParaCadastroUsuario()
             }
         }
+        lifecycleScope.launch {
+            dataStore.data.collect {
+                it[USUARIO_LOGADO]?.let { usuario ->
+                    if(usuario.isNotBlank()){
+                        vaiParaTelaInicial()
+                    }
+                }
+            }
+        }
+    }
 
+    private fun autentica(id: String, senha: String) {
+        lifecycleScope.launch {
+            try {
+                dao.autentica(id, senha)?.let { usuario ->
+                    dataStore.edit {
+                        it[USUARIO_LOGADO] = usuario.id
+                    }
+                } ?: mostraToast()
+            } catch (e: Exception) {
+                Log.e(TAG, "autentica: ", e)
+            }
+        }
+    }
+
+    private fun vaiParaTelaInicial() {
+        Intent(this, ListaProdutosActivity::class.java).apply {
+            startActivity(this)
+        }
     }
 
     private fun vaiParaCadastroUsuario() {

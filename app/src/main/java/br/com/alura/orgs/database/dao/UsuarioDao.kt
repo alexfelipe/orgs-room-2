@@ -11,8 +11,8 @@ interface UsuarioDao {
     @Insert
     suspend fun salva(usuario: Usuario)
 
-    @Query("SELECT id FROM Usuario WHERE id = :id LIMIT 1")
-    suspend fun buscaPorId(id: String): String?
+    @Query("SELECT * FROM Usuario WHERE id = :id")
+    suspend fun buscaPorId(id: String): Usuario?
 
     @Query("SELECT * FROM Usuario WHERE id = :id AND senha = :senha")
     suspend fun autentica(id: String, senha: String): Usuario?
