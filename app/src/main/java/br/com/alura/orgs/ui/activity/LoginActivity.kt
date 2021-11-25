@@ -4,18 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityLoginBinding
 import br.com.alura.orgs.extensions.mostraToast
 import br.com.alura.orgs.preferences.USUARIO_LOGADO
 import br.com.alura.orgs.preferences.dataStore
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 private const val TAG = "LoginActivity"
 
@@ -44,9 +41,8 @@ class LoginActivity : AppCompatActivity() {
         lifecycleScope.launch {
             dataStore.data.collect {
                 it[USUARIO_LOGADO]?.let { usuario ->
-                    if(usuario.isNotBlank()){
-                        vaiParaTelaInicial()
-                    }
+                    Log.i(TAG, "onCreate: $usuario")
+                    vaiParaTelaInicial()
                 }
             }
         }

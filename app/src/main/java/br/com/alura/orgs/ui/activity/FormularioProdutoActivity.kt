@@ -8,6 +8,8 @@ import br.com.alura.orgs.database.dao.ProdutoDao
 import br.com.alura.orgs.databinding.ActivityFormularioProdutoBinding
 import br.com.alura.orgs.extensions.tentaCarregarImagem
 import br.com.alura.orgs.model.Produto
+import br.com.alura.orgs.preferences.USUARIO_LOGADO
+import br.com.alura.orgs.preferences.dataStore
 import br.com.alura.orgs.ui.dialog.FormularioImagemDialog
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -24,6 +26,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
         val db = AppDatabase.instancia(this)
         db.produtoDao()
     }
+    private var usuario: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +41,13 @@ class FormularioProdutoActivity : AppCompatActivity() {
                 }
         }
         tentaCarregarProduto()
+        lifecycleScope.launch {
+            dataStore.data.collect {
+                it[USUARIO_LOGADO]?.let { usuarioLogado ->
+                    usuario = usuarioLogado
+                }
+            }
+        }
     }
 
     private fun tentaCarregarProduto() {
@@ -76,15 +86,16 @@ class FormularioProdutoActivity : AppCompatActivity() {
         val botaoSalvar = binding.activityFormularioProdutoBotaoSalvar
 
         botaoSalvar.setOnClickListener {
-            val produtoNovo = criaProduto()
-            lifecycleScope.launch {
-                produtoDao.salva(produtoNovo)
-                finish()
+            criaProduto()?.let { produtoNovo ->
+                lifecycleScope.launch {
+                    produtoDao.salva(produtoNovo)
+                    finish()
+                }
             }
         }
     }
 
-    private fun criaProduto(): Produto {
+    private fun criaProduto(): Produto? {
         val campoNome = binding.activityFormularioProdutoNome
         val nome = campoNome.text.toString()
         val campoDescricao = binding.activityFormularioProdutoDescricao
@@ -97,13 +108,16 @@ class FormularioProdutoActivity : AppCompatActivity() {
             BigDecimal(valorEmTexto)
         }
 
-        return Produto(
-            id = produtoId,
-            nome = nome,
-            descricao = descricao,
-            valor = valor,
-            imagem = url
-        )
+        return usuario?.let {
+            Produto(
+                id = produtoId,
+                nome = nome,
+                descricao = descricao,
+                valor = valor,
+                imagem = url,
+                usuarioId = it
+            )
+        }
     }
 
 }

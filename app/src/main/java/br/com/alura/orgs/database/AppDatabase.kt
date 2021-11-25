@@ -7,13 +7,15 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import br.com.alura.orgs.database.converter.Converters
 import br.com.alura.orgs.database.dao.ProdutoDao
+import br.com.alura.orgs.database.dao.ProdutoUsuario
+import br.com.alura.orgs.database.dao.ProdutoUsuarioDao
 import br.com.alura.orgs.database.dao.UsuarioDao
 import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.model.Usuario
 
 @Database(
     entities = [Produto::class, Usuario::class],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -22,6 +24,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun produtoDao(): ProdutoDao
 
     abstract fun usuarioDao(): UsuarioDao
+
+    abstract fun produtoUsuarioDao(): ProdutoUsuarioDao
 
     companion object {
         @Volatile
