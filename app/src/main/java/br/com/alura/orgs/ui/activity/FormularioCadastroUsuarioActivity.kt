@@ -1,19 +1,13 @@
 package br.com.alura.orgs.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import br.com.alura.orgs.R
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityFormularioCadastroUsuarioBinding
-import br.com.alura.orgs.extensions.tentaCarregarImagem
-import br.com.alura.orgs.extensions.tentaCarregarImagemArredondada
 import br.com.alura.orgs.model.Usuario
-import br.com.alura.orgs.ui.dialog.FormularioImagemDialog
-import coil.load
-import coil.transform.CircleCropTransformation
 import kotlinx.coroutines.launch
 
 private const val TAG = "CadastroUsuario"

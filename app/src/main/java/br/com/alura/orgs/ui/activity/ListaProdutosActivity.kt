@@ -75,8 +75,7 @@ class ListaProdutosActivity : AppCompatActivity() {
             .buscaProdutosDoUsuario(usuarioId)
             .map { produtosUsuario ->
                 produtosUsuario.produtos
-            }
-            .collect(adapter::atualiza)
+            }.collect(adapter::atualiza)
     }
 
     private suspend fun desloga() = dataStore.edit {

@@ -7,7 +7,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import br.com.alura.orgs.database.converter.Converters
 import br.com.alura.orgs.database.dao.ProdutoDao
-import br.com.alura.orgs.database.dao.ProdutoUsuario
 import br.com.alura.orgs.database.dao.ProdutoUsuarioDao
 import br.com.alura.orgs.database.dao.UsuarioDao
 import br.com.alura.orgs.model.Produto

@@ -63,7 +63,6 @@ class DetalhesProdutoActivity : AppCompatActivity() {
                         finish()
                     }
                 }
-
             }
             R.id.menu_detalhes_produto_editar -> {
                 Intent(this, FormularioProdutoActivity::class.java).apply {

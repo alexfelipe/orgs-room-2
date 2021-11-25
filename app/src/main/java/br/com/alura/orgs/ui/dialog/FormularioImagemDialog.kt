@@ -11,12 +11,10 @@ class FormularioImagemDialog(private val context: Context) {
 
     fun mostra(
         urlPadrao: String? = null,
-        imagemPadrao: Int = R.drawable.foto_perfil_padrao,
         quandoImagemCarragada: (imagem: String) -> Unit
     ) {
         FormularioImagemBinding
             .inflate(LayoutInflater.from(context)).apply {
-                formularioImagemImageview.tentaCarregarImagem(url = imagemPadrao)
 
                 urlPadrao?.let {
                     formularioImagemImageview.tentaCarregarImagem(it)
