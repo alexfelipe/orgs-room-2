@@ -1,10 +1,8 @@
 package br.com.alura.orgs.ui.activity
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import br.com.alura.orgs.R
+import androidx.appcompat.app.AppCompatActivity
 import br.com.alura.orgs.databinding.ActivityLoginBinding
 import br.com.alura.orgs.extensions.vaiPara
 
@@ -19,6 +17,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraBotaoCadastrar()
         configuraBotaoEntrar()
+        vaiPara(ListaProdutosActivity::class.java)
     }
 
     private fun configuraBotaoEntrar() {

@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import br.com.alura.orgs.database.converter.Converters
 import br.com.alura.orgs.database.dao.ProdutoDao
 import br.com.alura.orgs.database.dao.UsuarioDao
+import br.com.alura.orgs.database.migrations.MIGRATION_1_2
 import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.model.Usuario
 
@@ -34,8 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
                 context,
                 AppDatabase::class.java,
                 "orgs.db"
-            ).allowMainThreadQueries()
-                .fallbackToDestructiveMigration()
+            ).addMigrations(MIGRATION_1_2)
                 .build().also {
                     db = it
                 }
