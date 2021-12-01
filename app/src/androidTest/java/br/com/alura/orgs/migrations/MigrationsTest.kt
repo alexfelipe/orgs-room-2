@@ -60,6 +60,7 @@ class MigrationsTest {
             put("senha", "teste2")
         }
         db.insert("Usuario", OnConflictStrategy.ABORT, usuario)
+        db.close()
 
         //Verificar se o dado inserido no banco de dados é o esperado
         runBlocking {
@@ -83,6 +84,7 @@ class MigrationsTest {
                 usuarioEncontrado
             )
         }
+        dbMigrado.close()
     }
 
 }

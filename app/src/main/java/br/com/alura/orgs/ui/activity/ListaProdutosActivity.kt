@@ -2,11 +2,14 @@ package br.com.alura.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityListaProdutosActivityBinding
+import br.com.alura.orgs.model.Usuario
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -21,6 +24,11 @@ class ListaProdutosActivity : AppCompatActivity() {
         val db = AppDatabase.instancia(this)
         db.produtoDao()
     }
+    private val usuarioDao by lazy {
+        AppDatabase.instancia(this).usuarioDao()
+    }
+    private var usuarioLogado: Usuario? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +36,22 @@ class ListaProdutosActivity : AppCompatActivity() {
         configuraRecyclerView()
         configuraFab()
         lifecycleScope.launch {
+            buscaProdutos()
+            tentaBuscarUsuario()
+            usuarioLogado?.apply {
+                Log.i("ListaProdutos", "onCreate: $usuarioLogado")
+            } ?: finish()
+        }
+    }
+
+    private suspend fun tentaBuscarUsuario() {
+        usuarioLogado = intent.getStringExtra(CHAVE_USUARIO_ID)?.let { usuario ->
+            usuarioDao.buscaPorId(usuario)
+        }
+    }
+
+    private fun CoroutineScope.buscaProdutos() {
+        launch {
             dao.buscaTodos().collect { produtos ->
                 adapter.atualiza(produtos)
             }
