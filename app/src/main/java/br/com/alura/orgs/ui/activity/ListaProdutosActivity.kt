@@ -2,14 +2,13 @@ package br.com.alura.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import br.com.alura.orgs.database.AppDatabase
 import br.com.alura.orgs.databinding.ActivityListaProdutosActivityBinding
-import br.com.alura.orgs.model.Usuario
+import br.com.alura.orgs.preferences.dataStore
+import br.com.alura.orgs.preferences.usuarioLogadoPreferences
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -27,7 +26,6 @@ class ListaProdutosActivity : AppCompatActivity() {
     private val usuarioDao by lazy {
         AppDatabase.instancia(this).usuarioDao()
     }
-    private var usuarioLogado: Usuario? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,25 +34,32 @@ class ListaProdutosActivity : AppCompatActivity() {
         configuraRecyclerView()
         configuraFab()
         lifecycleScope.launch {
-            buscaProdutos()
-            tentaBuscarUsuario()
-            usuarioLogado?.apply {
-                Log.i("ListaProdutos", "onCreate: $usuarioLogado")
+            launch {
+                buscaProdutos()
+            }
+            launch {
+                verificaUsuarioLogado()
+            }
+        }
+    }
+
+    private suspend fun verificaUsuarioLogado() {
+        dataStore.data.collect { preferences ->
+            preferences[usuarioLogadoPreferences]?.let { usuarioId ->
+                buscaUsuario(usuarioId)
             } ?: finish()
         }
     }
 
-    private suspend fun tentaBuscarUsuario() {
-        usuarioLogado = intent.getStringExtra(CHAVE_USUARIO_ID)?.let { usuario ->
-            usuarioDao.buscaPorId(usuario)
-        }
+    private suspend fun buscaUsuario(usuarioId: String) {
+        usuarioDao.buscaPorId(usuarioId)?.let { usuarioEncontrado ->
+            title = usuarioEncontrado.nome
+        } ?: finish()
     }
 
-    private fun CoroutineScope.buscaProdutos() {
-        launch {
-            dao.buscaTodos().collect { produtos ->
-                adapter.atualiza(produtos)
-            }
+    private suspend fun buscaProdutos() {
+        dao.buscaTodos().collect { produtos ->
+            adapter.atualiza(produtos)
         }
     }
 
