@@ -2,6 +2,7 @@ package br.com.alura.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +16,7 @@ import br.com.alura.orgs.model.Usuario
 import br.com.alura.orgs.preferences.dataStore
 import br.com.alura.orgs.preferences.usuarioLogadoPreferences
 import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 
@@ -25,9 +26,9 @@ class ListaProdutosActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityListaProdutosActivityBinding.inflate(layoutInflater)
     }
-    private val dao by lazy {
+    private val produtosDoUsuarioDao by lazy {
         val db = AppDatabase.instancia(this)
-        db.produtoDao()
+        db.produtosDoUsuarioDao()
     }
     private val usuarioDao by lazy {
         AppDatabase.instancia(this).usuarioDao()
@@ -39,9 +40,6 @@ class ListaProdutosActivity : AppCompatActivity() {
         configuraRecyclerView()
         configuraFab()
         lifecycleScope.launch {
-            launch {
-                buscaProdutos()
-            }
             launch {
                 verificaUsuarioLogado()
             }
@@ -70,10 +68,14 @@ class ListaProdutosActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun verificaUsuarioLogado() {
+    private suspend fun verificaUsuarioLogado(usuarioLogado: (usuario: Usuario) -> Unit = {}) {
         dataStore.data.collect { preferences ->
             preferences[usuarioLogadoPreferences]?.let { usuarioId ->
-                buscaUsuario(usuarioId)
+                buscaUsuario(usuarioId)?.also { usuarioEncontrado ->
+                    lifecycleScope.launch {
+                        buscaProdutos(usuarioEncontrado.id)
+                    }
+                }
             } ?: vaiParaLogin()
         }
     }
@@ -89,10 +91,13 @@ class ListaProdutosActivity : AppCompatActivity() {
         finish()
     }
 
-    private suspend fun buscaProdutos() {
-        dao.buscaTodos().collect { produtos ->
-            adapter.atualiza(produtos)
-        }
+    private suspend fun buscaProdutos(usuarioId: String) {
+        produtosDoUsuarioDao.buscaProdutosDoUsuario(usuarioId)
+            .map { produtosDoUsuario ->
+                produtosDoUsuario.produtos
+            }.collect { produtos ->
+                adapter.atualiza(produtos)
+            }
     }
 
     private fun configuraFab() {

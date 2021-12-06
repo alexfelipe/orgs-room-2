@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import br.com.alura.orgs.database.converter.Converters
 import br.com.alura.orgs.database.dao.ProdutoDao
+import br.com.alura.orgs.database.dao.ProdutosDoUsuarioDao
 import br.com.alura.orgs.database.dao.UsuarioDao
 import br.com.alura.orgs.database.migrations.MIGRATION_1_2
 import br.com.alura.orgs.database.migrations.MIGRATION_1_3
@@ -27,6 +28,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun produtoDao(): ProdutoDao
 
     abstract fun usuarioDao(): UsuarioDao
+
+    abstract fun produtosDoUsuarioDao(): ProdutosDoUsuarioDao
 
     companion object {
         @Volatile
