@@ -38,7 +38,13 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
     private fun criaUsuario(): Usuario {
         val usuario = binding.activityFormularioCadastroUsuario.text.toString()
         val nome = binding.activityFormularioCadastroNome.text.toString()
+        val cpf = binding.activityFormularioCadastroCpf.text.toString()
         val senha = binding.activityFormularioCadastroSenha.text.toString()
-        return Usuario(usuario, nome, senha)
+        return Usuario(
+            id = usuario,
+            nome = nome,
+            cpf = cpf,
+            senha = senha
+        )
     }
 }

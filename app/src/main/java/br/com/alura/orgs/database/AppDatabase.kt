@@ -1,16 +1,13 @@
 package br.com.alura.orgs.database
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import br.com.alura.orgs.database.converter.Converters
 import br.com.alura.orgs.database.dao.ProdutoDao
 import br.com.alura.orgs.database.dao.ProdutosDoUsuarioDao
 import br.com.alura.orgs.database.dao.UsuarioDao
 import br.com.alura.orgs.database.migrations.MIGRATION_1_2
-import br.com.alura.orgs.database.migrations.MIGRATION_1_3
+import br.com.alura.orgs.database.migrations.MIGRATION_2_3
 import br.com.alura.orgs.model.Produto
 import br.com.alura.orgs.model.Usuario
 
@@ -19,8 +16,14 @@ import br.com.alura.orgs.model.Usuario
         Produto::class,
         Usuario::class
     ],
-    version = 3,
-    exportSchema = true
+    version = 4,
+    exportSchema = true,
+    autoMigrations = [
+        AutoMigration(
+            from = 3,
+            to = 4
+        )
+    ]
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -41,10 +44,11 @@ abstract class AppDatabase : RoomDatabase() {
                 "orgs.db"
             ).addMigrations(
                 MIGRATION_1_2,
-                MIGRATION_1_3
-            ).build().also {
-                db = it
-            }
+                MIGRATION_2_3
+            ).fallbackToDestructiveMigrationOnDowngrade()
+                .build().also {
+                    db = it
+                }
         }
     }
 }
